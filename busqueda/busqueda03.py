@@ -1,4 +1,4 @@
-from mapa01 import Mapa
+from mapa03 import Mapa
 
 
 class Nodo:
@@ -9,15 +9,18 @@ class Nodo:
         if accion and padre:
             self.estado = problema.transicion(padre.estado, accion)[0]
             self.costo = padre.costo + problema.transicion(padre.estado, accion)[1]
+
+            # Función de evaluación. Es el costo total al nodo + la función heuristica
+            self.f = self.costo + problema.h(self.estado)
         else:
             self.estado = None
             self.costo = 0
 
     def __str__(self):
         if self.padre:
-            return f'<{self.estado},{self.padre},{self.accion},{self.costo}>'
+            return f'<{self.estado},{self.padre},{self.accion},{self.costo},{self.f}>'
         else:
-            return f'<{self.estado},N/A,N/A,{self.costo}>'
+            return f'<{self.estado},N/A,N/A,{self.costo},{self.f}>'
 
     def solucion(self):
         # Imprime la lista de padres hasta llegar a la raiz.
@@ -68,14 +71,15 @@ def imprimir(lista, nombre):
     print(f'Fin = {nombre}')
 
 
-def bfs(problema):
-    raiz = Nodo()
+def a_star(problema):
+    raiz = Nodo(problema=problema)
     raiz.padre = None
     raiz.accion = None
     raiz.costo = 0
     raiz.estado = problema.estado_inicial
+    raiz.f = problema.h(problema.estado_inicial)
 
-    print(f'raiz={raiz}')
+    # print(f'raiz={raiz}')
 
     if problema.goal_test(raiz.estado):
         raiz.solucion()
@@ -86,19 +90,22 @@ def bfs(problema):
     while True:
         if len(frontera) <= 0:
             return "Sin Solucion"
-        nodo = frontera.pop(0)
-        #print(f'Extrayendo {nodo.estado} de frontera')
+        nodo = frontera.pop()
         explorados.append(nodo)
+        mejor_evaluacion = 100000
+        mejor_hijo = None
         for accion in problema.acciones_posibles(nodo.estado):
-            #print(f'Procesando accion={accion}')
             hijo = Nodo(problema, nodo, accion)
+            if hijo.f < mejor_evaluacion:
+                mejor_hijo = hijo
+                mejor_evaluacion = hijo.f
 
-            # Verificamos que el hijo no esté entre los explorados ni en la frontera.
-            if (not esta_en(frontera, hijo)) and (not esta_en(explorados, hijo)):
-                if problema.goal_test(hijo.estado):
-                    hijo.solucion()
-                #print(f'Agregando {hijo.estado} a frontera')
-                frontera.append(hijo)
+        # Verificamos que el hijo no esté entre los explorados ni en la frontera.
+        print(f'Mejor hijo: {mejor_hijo}')
+        if (not esta_en(frontera, mejor_hijo)) and (not esta_en(explorados, mejor_hijo)):
+            if problema.goal_test(mejor_hijo.estado):
+                mejor_hijo.solucion()
+            frontera.append(mejor_hijo)
 
             #imprimir(frontera, 'frontera')
             #imprimir(explorados, 'explorados')
@@ -106,6 +113,6 @@ def bfs(problema):
 
 if __name__ == "__main__":
     mapa = Mapa()
-    print(f'Estado inicial = {mapa.estado_inicial}')
-    print(f'Acciones={mapa.acciones_posibles("Seattle")}')
-    bfs(mapa)
+    #print(f'Estado inicial = {mapa.estado_inicial}')
+    # print(f'Acciones={mapa.acciones_posibles("Seattle")}')
+    a_star(mapa)

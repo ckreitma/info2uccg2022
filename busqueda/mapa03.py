@@ -3,6 +3,8 @@
 ##### NO LA SOLUCION #############
 ##################################
 
+# se incluye la heurística.
+
 class Mapa:
 
     # Definimos el constructor.
@@ -36,8 +38,8 @@ class Mapa:
 
         # Fijarse en el archivo mapa_con_numero
         self.transiciones = []
-        self.transiciones.append((0, 9, 1737))
         self.transiciones.append((0, 1, 678))
+        self.transiciones.append((0, 9, 1737))
         self.transiciones.append((1, 2, 348))
         self.transiciones.append((1, 3, 386))
         self.transiciones.append((2, 4, 357))
@@ -83,3 +85,39 @@ class Mapa:
             if self.transicion(estado, accion)[0]:
                 lista_acciones.append(accion)
         return lista_acciones
+
+    def h(self, estado):
+        # Definir la distancia en línea recta desde el estado al destino.
+        if estado == 'Seattle':
+            return 5400  # 3223
+        if estado == 'SanFrancisco':
+            return 2436
+        if estado == 'LosAngeles':
+            return 2295
+        if estado == 'Riverside':
+            return 2252
+        if estado == 'Phoenix':
+            return 2385
+        if estado == 'Houston':
+            return 818
+        if estado == 'Dallas':
+            return 911
+        if estado == 'Miami':
+            return 918
+        if estado == 'Atlanta':
+            return 542
+        if estado == 'Chicago':
+            return 595
+        if estado == 'Detroit':
+            return 395
+        if estado == 'Boston':
+            return 394
+        if estado == 'NewYork':
+            return 200
+        if estado == 'Philadelphia':
+            return 115
+        if estado == 'Washington':
+            return 0
+
+        print(f'Estado no encontrado {estado}')
+        return 60000
