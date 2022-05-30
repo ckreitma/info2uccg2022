@@ -20,7 +20,11 @@ class MLP(nn.Module):
             nn.Flatten(),
             nn.Linear(28*28, 784),
             nn.ReLU(),
-            nn.Linear(784, 32),
+            nn.Linear(784, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
             nn.ReLU(),
             nn.Linear(32, 10)
         )
